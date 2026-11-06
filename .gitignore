@@ -7,3 +7,15 @@ __pycache__/
 venv/
 .env 
 
+# Private database files
+finance.db
+finance_backup.db
+*.db
+
+# Uploaded financial reports
+uploads/
+
+# Environment and Python files
+.env
+__pycache__/
+*.pyc
