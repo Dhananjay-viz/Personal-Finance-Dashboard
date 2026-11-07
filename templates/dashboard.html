@@ -1,0 +1,238 @@
+
+{% extends "base.html" %}
+
+{% block title %}Dashboard | FinancePro{% endblock %}
+
+{% block content %}
+
+<!-- HEADER -->
+<header class="top-header">
+    <div>
+        <p class="welcome-text">WELCOME BACK</p>
+        <h1>Financial Overview</h1>
+        <p class="header-subtitle">
+            Track your money. Understand your spending.
+        </p>
+    </div>
+
+    <div class="header-actions">
+        <button class="add-btn" onclick="openForm()">
+            + Add Transaction
+        </button>
+        <button class="export-btn" onclick="exportTransactions()">
+            ↓ Export CSV
+        </button>
+    </div>
+</header>
+
+<!-- DASHBOARD MONTH FILTER -->
+<section class="panel dashboard-filter-panel">
+    <div class="filter-area">
+        <label for="dashboardMonth">Dashboard Month</label>
+        <input type="month" id="dashboardMonth">
+        <button type="button" onclick="loadAnalytics()">Apply</button>
+    </div>
+</section>
+
+<!-- SUMMARY CARDS -->
+<section class="cards">
+
+    <div class="card income-card">
+        <div class="card-top">
+            <span>Total Income</span>
+            <span class="card-icon">↗</span>
+        </div>
+        <h2 id="income">₹0</h2>
+        <small>Money received this month</small>
+    </div>
+
+    <div class="card expense-card">
+        <div class="card-top">
+            <span>Total Expenses</span>
+            <span class="card-icon">↘</span>
+        </div>
+        <h2 id="expenses">₹0</h2>
+        <small>Money spent this month</small>
+    </div>
+
+    <div class="card savings-card">
+        <div class="card-top">
+            <span>Total Savings</span>
+            <span class="card-icon">◈</span>
+        </div>
+        <h2 id="savings">₹0</h2>
+        <small>Income minus expenses</small>
+    </div>
+
+    <div class="card health-card">
+        <div class="card-top">
+            <span>Financial Health</span>
+            <span class="card-icon">♥</span>
+        </div>
+        <h2 id="healthScore">0%</h2>
+        <small id="healthStatus">Calculating...</small>
+        <div class="progress-track">
+            <div id="healthProgress" class="progress-fill"></div>
+        </div>
+        <small>Based on monthly savings rate</small>
+    </div>
+
+</section>
+
+<!-- ANALYTICS -->
+<section class="charts" id="analytics">
+
+    <div class="panel chart-panel monthly-panel">
+        <div class="panel-heading">
+            <div>
+                <h3>Monthly Overview</h3>
+                <p>Income vs expenses over time</p>
+            </div>
+            <select id="overviewRange" onchange="loadAnalytics()">
+                <option value="6">Last 6 Months</option>
+                <option value="3">Last 3 Months</option>
+                <option value="12">Last 12 Months</option>
+            </select>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="barChart"></canvas>
+        </div>
+    </div>
+
+    <div class="panel chart-panel">
+        <div class="panel-heading">
+            <div>
+                <h3>Expense Breakdown</h3>
+                <p>Where your money goes</p>
+            </div>
+            <span class="panel-icon">◉</span>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="pieChart"></canvas>
+        </div>
+
+        <div id="expenseBreakdownList" class="breakdown-list">
+            <p>No expense data available.</p>
+        </div>
+    </div>
+
+</section>
+
+<!-- RECENT TRANSACTIONS -->
+<section class="panel recent-panel">
+    <div class="panel-heading">
+        <div>
+            <h3>Recent Transactions</h3>
+            <p>Your latest five transactions</p>
+        </div>
+        <a href="{{ url_for('transactions_page') }}">View All</a>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody id="recentTransactionList">
+                <tr>
+                    <td colspan="5">Loading transactions...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- QUICK ACTIONS -->
+<section class="panel quick-actions-panel">
+    <div class="panel-heading">
+        <div>
+            <h3>Quick Actions</h3>
+            <p>Manage your finances quickly</p>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <button onclick="openForm()">＋ Add Transaction</button>
+
+        <a href="{{ url_for('reports_page') }}">
+            ▤ View Reports
+        </a>
+
+        <button onclick="exportTransactions()">↓ Export Data</button>
+
+        <a href="{{ url_for('budgets_page') }}">
+            ◈ Manage Budget
+        </a>
+    </div>
+</section>
+
+{% endblock %}
+
+<!-- TRANSACTION MODAL -->
+{% block transaction_modal %}
+
+<div class="modal" id="transactionModal">
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <div>
+                <h2>Add Transaction</h2>
+                <p>Enter your transaction details</p>
+            </div>
+
+            <button type="button"
+                    class="modal-close"
+                    onclick="closeForm()">×</button>
+        </div>
+
+        <form id="transactionForm">
+
+            <label>Date</label>
+            <input type="date" id="date" required>
+
+            <label>Description</label>
+            <input type="text" id="description"
+                   placeholder="e.g. Monthly salary" required>
+
+            <label>Category</label>
+            <input type="text" id="category"
+                   placeholder="e.g. Food, Shopping" required>
+
+            <label>Transaction Type</label>
+            <select id="type" required>
+                <option value="Expense">Expense</option>
+                <option value="Income">Income</option>
+            </select>
+
+            <label>Amount (₹)</label>
+            <input type="number" id="amount"
+                   placeholder="Enter amount"
+                   min="0.01" step="0.01" required>
+
+            <label>Payment Method</label>
+            <select id="payment_method" required>
+                <option value="Cash">Cash</option>
+                <option value="UPI">UPI</option>
+                <option value="Debit Card">Debit Card</option>
+                <option value="Net Banking">Net Banking</option>
+            </select>
+
+            <div class="modal-buttons">
+                <button type="submit">Save Transaction</button>
+                <button type="button" class="cancel"
+                        onclick="closeForm()">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}
