@@ -1451,3 +1451,152 @@ body {
         padding: 12px;
     }
 }
+
+/* ===== QUICK ACTIONS - ALL FOUR SAME DESIGN ===== */
+
+.quick-actions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+    width: 100%;
+}
+
+.quick-actions button,
+.quick-actions a {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 150px;
+    box-sizing: border-box;
+    padding: 25px 35px;
+    border: 2px solid var(--border);
+    border-radius: 24px;
+    background: linear-gradient(145deg, var(--card2), #121c33);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 22px;
+    font-weight: 600;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quick-actions button:hover,
+.quick-actions a:hover {
+    border-color: var(--purple);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 18px rgba(145, 102, 255, 0.15);
+}
+
+.quick-actions button:active,
+.quick-actions a:active {
+    transform: scale(0.99);
+}
+
+
+/* QUICK ACTIONS - COMPACT SIZE */
+
+.quick-actions {
+    gap: 12px !important;
+}
+
+.quick-actions button,
+.quick-actions a {
+    min-height: 75px !important;
+    padding: 15px 22px !important;
+    border-radius: 16px !important;
+    font-size: 16px !important;
+}
+
+
+/* QUICK ACTIONS - 2 COLUMNS, COMPACT CARDS */
+
+.quick-actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+}
+
+.quick-actions button,
+.quick-actions a {
+    width: 100%;
+    min-width: 0;
+    min-height: 65px !important;
+    padding: 12px 15px !important;
+    border-radius: 12px !important;
+    font-size: 14px !important;
+    font-weight: 600;
+    box-sizing: border-box;
+}
+
+@media (max-width: 360px) {
+    .quick-actions button,
+    .quick-actions a {
+        font-size: 12px !important;
+        padding: 10px !important;
+    }
+}
+
+
+/* UPLOAD REPORT AND SAVE SETTINGS BUTTONS */
+
+.upload-panel button,
+.import-panel button,
+#uploadReportBtn,
+.settings-panel button,
+#saveSettingsBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 11px 20px;
+    background: linear-gradient(135deg, var(--purple), #7045dc);
+    color: #ffffff;
+    border: 1px solid rgba(145, 102, 255, 0.4);
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.upload-panel button:hover,
+.import-panel button:hover,
+#uploadReportBtn:hover,
+.settings-panel button:hover,
+#saveSettingsBtn:hover {
+    background: linear-gradient(135deg, #a17dff, #8055ed);
+    box-shadow: 0 5px 16px rgba(145, 102, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+
+/* IMPORT REPORT AND SETTINGS BUTTONS */
+
+#uploadResults ~ section button,
+section.panel button[onclick="uploadFinanceReport()"],
+section.panel button[onclick="saveSettings()"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 11px 22px;
+    background: linear-gradient(135deg, #a17dff, #8055ed);
+    color: #ffffff;
+    border: none;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(128, 85, 237, 0.22);
+    transition: 0.2s ease;
+}
+
+section.panel button[onclick="uploadFinanceReport()"]:hover,
+section.panel button[onclick="saveSettings()"]:hover {
+    background: linear-gradient(135deg, #8055ed, #6840d0);
+    transform: translateY(-2px);
+}
+

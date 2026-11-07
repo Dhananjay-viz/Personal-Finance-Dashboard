@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Import Report | FinancePro{% endblock %}
+
+{% block content %}
+
+<!-- HEADER -->
+<header class="page-header">
+    <div>
+        <h1>Import Finance Report</h1>
+        <p>Upload your financial data using a CSV file</p>
+    </div>
+</header>
+
+<!-- UPLOAD SECTION -->
+<section class="panel">
+
+    <h2>Upload File</h2>
+
+    <p>Select your financial CSV file below.</p>
+
+    <input
+        type="file"
+        id="financeFile"
+        accept=".csv"
+    >
+
+    <button type="button" onclick="uploadFinanceReport()">
+        Upload Report
+    </button>
+
+    <p id="uploadStatus"></p>
+
+</section>
+
+<!-- UPLOAD RESULTS -->
+<section class="panel" id="uploadResults" style="display:none;">
+
+    <h2>Upload Summary</h2>
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>File Name</h3>
+            <p id="uploadedFileName">-</p>
+        </div>
+
+        <div class="card">
+            <h3>Total Rows</h3>
+            <p id="uploadedRows">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Total Columns</h3>
+            <p id="uploadedColumns">0</p>
+        </div>
+
+    </div>
+
+    <h3>Data Preview</h3>
+
+    <div class="table-wrap">
+        <table>
+            <thead id="uploadPreviewHead"></thead>
+            <tbody id="uploadPreviewBody"></tbody>
+        </table>
+    </div>
+
+</section>
+
+{% endblock %}

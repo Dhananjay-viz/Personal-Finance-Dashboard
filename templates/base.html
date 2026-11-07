@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}FinancePro{% endblock %}</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <span class="brand-icon">✦</span>
+            <h2>Finance<span>Pro</span></h2>
+        </div>
+
+        <p class="menu-title">MENU</p>
+
+        <nav class="sidebar-nav">
+
+            <a href="{{ url_for('home') }}"
+               class="{% if active_page == 'dashboard' %}active{% endif %}">
+                ▦ Dashboard
+            </a>
+
+            <a href="{{ url_for('transactions_page') }}"
+               class="{% if active_page == 'transactions' %}active{% endif %}">
+                ⇄ Transactions
+            </a>
+
+            <a href="{{ url_for('analytics_page') }}"
+               class="{% if active_page == 'analytics' %}active{% endif %}">
+                ▥ Analytics
+            </a>
+
+            <a href="{{ url_for('budgets_page') }}"
+               class="{% if active_page == 'budgets' %}active{% endif %}">
+                ◈ Budgets
+            </a>
+
+            <a href="{{ url_for('reports_page') }}"
+               class="{% if active_page == 'reports' %}active{% endif %}">
+                ▤ Reports
+            </a>
+
+            <a href="{{ url_for('import_report_page') }}"
+               class="{% if active_page == 'import_report' %}active{% endif %}">
+                📂 Import Report
+            </a>
+
+            <a href="{{ url_for('settings_page') }}"
+               class="{% if active_page == 'settings' %}active{% endif %}">
+                ⚙ Settings
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="profile">
+                <div class="profile-avatar">D</div>
+
+                <div>
+                    <strong>My Finance</strong>
+                    <small>Personal Account</small>
+                </div>
+            </div>
+
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        {% block content %}{% endblock %}
+
+        <footer class="dashboard-footer">
+            <p>FinancePro © 2026 | Personal Finance Dashboard</p>
+        </footer>
+
+    </main>
+
+</div>
+
+<!-- SHARED TRANSACTION MODAL -->
+{% block transaction_modal %}{% endblock %}
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+{% block extra_scripts %}{% endblock %}
+
+</body>
+</html>

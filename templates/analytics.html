@@ -1,0 +1,119 @@
+
+{% extends "base.html" %}
+
+{% block title %}Analytics | FinancePro{% endblock %}
+
+{% block content %}
+
+<!-- HEADER -->
+<header class="top-header">
+    <div>
+        <p class="welcome-text">FINANCIAL INSIGHTS</p>
+        <h1>Analytics</h1>
+        <p class="header-subtitle">
+            Understand your income, expenses and spending patterns.
+        </p>
+    </div>
+</header>
+
+<!-- MONTHLY SUMMARY -->
+<section class="cards">
+
+    <div class="card income-card">
+        <div class="card-top">
+            <span>Total Income</span>
+            <span class="card-icon">↗</span>
+        </div>
+        <h2 id="income">₹0</h2>
+        <small>Selected month</small>
+    </div>
+
+    <div class="card expense-card">
+        <div class="card-top">
+            <span>Total Expenses</span>
+            <span class="card-icon">↘</span>
+        </div>
+        <h2 id="expenses">₹0</h2>
+        <small>Selected month</small>
+    </div>
+
+    <div class="card savings-card">
+        <div class="card-top">
+            <span>Total Savings</span>
+            <span class="card-icon">◈</span>
+        </div>
+        <h2 id="savings">₹0</h2>
+        <small>Income minus expenses</small>
+    </div>
+
+    <div class="card health-card">
+        <div class="card-top">
+            <span>Financial Health</span>
+            <span class="card-icon">♥</span>
+        </div>
+        <h2 id="healthScore">0%</h2>
+        <small id="healthStatus">Calculating...</small>
+        <div class="progress-track">
+            <div id="healthProgress" class="progress-fill"></div>
+        </div>
+        <small>Based on monthly savings rate</small>
+    </div>
+
+</section>
+
+<!-- ANALYTICS FILTER -->
+<section class="panel dashboard-filter-panel">
+    <div class="filter-area">
+        <label for="dashboardMonth">Select Month</label>
+        <input type="month" id="dashboardMonth">
+        <button type="button" onclick="loadAnalytics()">
+            Apply
+        </button>
+    </div>
+</section>
+
+<!-- MONTHLY OVERVIEW -->
+<section class="panel chart-panel">
+
+    <div class="panel-heading">
+        <div>
+            <h3>Monthly Overview</h3>
+            <p>Income vs expenses over time</p>
+        </div>
+
+        <select id="overviewRange" onchange="loadAnalytics()">
+            <option value="6">Last 6 Months</option>
+            <option value="3">Last 3 Months</option>
+            <option value="12">Last 12 Months</option>
+        </select>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="barChart"></canvas>
+    </div>
+
+</section>
+
+<!-- EXPENSE BREAKDOWN -->
+<section class="panel chart-panel">
+
+    <div class="panel-heading">
+        <div>
+            <h3>Expense Breakdown</h3>
+            <p>Where your money goes</p>
+        </div>
+
+        <span class="panel-icon">◉</span>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="pieChart"></canvas>
+    </div>
+
+    <div id="expenseBreakdownList" class="breakdown-list">
+        <p>No expense data available.</p>
+    </div>
+
+</section>
+
+{% endblock %}
