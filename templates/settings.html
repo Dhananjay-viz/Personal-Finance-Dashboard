@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Settings | FinancePro{% endblock %}
+
+{% block content %}
+
+<!-- HEADER -->
+<header class="page-header">
+    <div>
+        <h1>Settings</h1>
+        <p>Manage your dashboard preferences</p>
+    </div>
+</header>
+
+<!-- GENERAL SETTINGS -->
+<section class="panel">
+
+    <h2>General Settings</h2>
+
+    <div class="setting-item">
+        <div>
+            <h3>Currency</h3>
+            <p>Select the currency used in your dashboard</p>
+        </div>
+
+        <select id="currencySetting">
+            <option value="₹">Indian Rupee (₹)</option>
+            <option value="$">US Dollar ($)</option>
+            <option value="€">Euro (€)</option>
+            <option value="£">British Pound (£)</option>
+        </select>
+    </div>
+
+    <button type="button" onclick="saveSettings()">
+        Save Settings
+    </button>
+
+    <p id="settingsStatus"></p>
+
+</section>
+
+<!-- ABOUT -->
+<section class="panel">
+
+    <h2>About FinancePro</h2>
+
+    <p>
+        FinancePro is a personal finance dashboard
+        designed to manage income, expenses, savings,
+        budgets and financial reports.
+    </p>
+
+    <p><strong>Version:</strong> 1.0</p>
+
+</section>
+
+{% endblock %}

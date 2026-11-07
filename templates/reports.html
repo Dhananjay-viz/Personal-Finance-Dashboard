@@ -1,0 +1,131 @@
+
+{% extends "base.html" %}
+
+{% block title %}Reports | FinancePro{% endblock %}
+
+{% block content %}
+
+<!-- HEADER -->
+<header class="top-header">
+    <div>
+        <p class="welcome-text">FINANCIAL SUMMARY</p>
+        <h1>Financial Reports</h1>
+        <p class="header-subtitle">
+            Review your income, expenses and savings.
+        </p>
+    </div>
+
+    <div class="header-actions">
+        <button class="export-btn" onclick="exportTransactions()">
+            ↓ Export CSV
+        </button>
+    </div>
+</header>
+
+<!-- REPORT SUMMARY -->
+<section class="cards">
+
+    <div class="card income-card">
+        <div class="card-top">
+            <span>Total Income</span>
+            <span class="card-icon">↗</span>
+        </div>
+        <h2 id="reportIncome">₹0</h2>
+        <small>Selected month</small>
+    </div>
+
+    <div class="card expense-card">
+        <div class="card-top">
+            <span>Total Expenses</span>
+            <span class="card-icon">↘</span>
+        </div>
+        <h2 id="reportExpenses">₹0</h2>
+        <small>Selected month</small>
+    </div>
+
+    <div class="card savings-card">
+        <div class="card-top">
+            <span>Total Savings</span>
+            <span class="card-icon">◈</span>
+        </div>
+        <h2 id="reportSavings">₹0</h2>
+        <small>Income minus expenses</small>
+    </div>
+
+    <div class="card health-card">
+        <div class="card-top">
+            <span>Savings Rate</span>
+            <span class="card-icon">%</span>
+        </div>
+        <h2 id="reportSavingsRate">0%</h2>
+        <small>Percentage of income saved</small>
+    </div>
+
+</section>
+
+<!-- REPORT FILTER -->
+<section class="panel dashboard-filter-panel">
+
+    <div class="filter-area">
+        <label for="dashboardMonth">Report Month</label>
+
+        <input type="month" id="dashboardMonth">
+
+        <button type="button" onclick="loadAnalytics()">
+            Generate Report
+        </button>
+    </div>
+
+</section>
+
+<!-- REPORT INFORMATION -->
+<section class="panel">
+
+    <div class="panel-heading">
+        <div>
+            <h3>Monthly Financial Report</h3>
+            <p>Your financial performance for the selected month.</p>
+        </div>
+    </div>
+
+    <div class="report-information">
+        <p>
+            <strong>Income:</strong>
+            Money received during the selected month.
+        </p>
+
+        <p>
+            <strong>Expenses:</strong>
+            Money spent during the selected month.
+        </p>
+
+        <p>
+            <strong>Savings:</strong>
+            Difference between income and expenses.
+        </p>
+
+        <p>
+            <strong>Savings Rate:</strong>
+            Percentage of income remaining after expenses.
+        </p>
+    </div>
+
+</section>
+
+<!-- EXPORT INFORMATION -->
+<section class="panel">
+
+    <div class="panel-heading">
+        <div>
+            <h3>Download Financial Data</h3>
+            <p>Export your transaction records for further analysis.</p>
+        </div>
+    </div>
+
+    <button class="export-btn" onclick="exportTransactions()">
+        ↓ Download Transactions CSV
+    </button>
+
+</section>
+
+{% endblock %}

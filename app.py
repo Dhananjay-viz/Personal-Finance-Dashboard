@@ -76,8 +76,63 @@ def initialize_database():
 # Home page
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return render_template(
+        "dashboard.html",
+        active_page="dashboard"
+    )
 
+# TRANSACTIONS PAGE
+@app.route("/transactions")
+def transactions_page():
+    return render_template(
+        "transactions.html",
+        active_page="transactions"
+    )
+
+
+# ANALYTICS PAGE
+@app.route("/analytics")
+def analytics_page():
+    return render_template(
+        "analytics.html",
+        active_page="analytics"
+    )
+
+
+# BUDGETS PAGE
+@app.route("/budgets")
+def budgets_page():
+    return render_template(
+        "budgets.html",
+        active_page="budgets"
+    )
+
+
+# REPORTS PAGE
+@app.route("/reports")
+def reports_page():
+    return render_template(
+        "reports.html",
+        active_page="reports"
+    )
+
+
+# IMPORT REPORT PAGE
+@app.route("/import-report")
+def import_report_page():
+    return render_template(
+        "import_report.html",
+        active_page="import_report"
+    )
+
+
+# SETTINGS PAGE
+@app.route("/settings")
+def settings_page():
+    return render_template(
+        "settings.html",
+        active_page="settings"
+    )
 
 # Get dashboard summary
 @app.route("/api/dashboard")
@@ -317,6 +372,7 @@ def allowed_file(filename):
     )
 
 
+
 @app.route("/api/upload-report", methods=["POST"])
 def upload_report():
 
@@ -325,13 +381,11 @@ def upload_report():
 
     file = request.files["file"]
 
-    if file.filename == "":
+    if not file.filename:
         return jsonify({"error": "No file selected"}), 400
 
     if not allowed_file(file.filename):
-        return jsonify({
-            "error": "Only CSV and XLSX files are allowed"
-        }), 400
+        return jsonify({"error": "Only CSV and XLSX files are allowed"}), 400
 
     filename = secure_filename(file.filename)
 
@@ -340,47 +394,168 @@ def upload_report():
 
     file_path = os.path.join(UPLOAD_FOLDER, filename)
 
-    # Avoid overwriting an existing uploaded file
     if os.path.exists(file_path):
         name, extension = os.path.splitext(filename)
         filename = f"{name}_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}{extension}"
         file_path = os.path.join(UPLOAD_FOLDER, filename)
 
+    conn = None
+
     try:
         file.save(file_path)
 
-        # Read uploaded report
+        # Read uploaded file
         if filename.lower().endswith(".csv"):
-            df = pd.read_csv(file_path)
+            df = pd.read_csv(file_path, encoding="utf-8-sig")
         else:
             df = pd.read_excel(file_path, engine="openpyxl")
 
-        # Clean column names
+        if df.empty:
+            return jsonify({"error": "The uploaded file is empty"}), 400
+
+        display_df = df.copy()
+        original_columns = [str(column).strip() for column in df.columns]
+
+        # Normalize column names
         df.columns = [
-            str(column).strip() for column in df.columns
+            str(column).strip().lower().replace(" ", "_").replace("-", "_")
+            for column in df.columns
         ]
 
-        # Basic report information
-        result = {
+        required = [
+            "date",
+            "description",
+            "category",
+            "type",
+            "amount",
+            "payment_method"
+        ]
+
+        missing = [column for column in required if column not in df.columns]
+
+        if missing:
+            return jsonify({
+                "error": "Missing required columns: " + ", ".join(missing)
+            }), 400
+
+        conn = get_db()
+
+        existing_rows = conn.execute("""
+            SELECT date, description, category, type, amount, payment_method
+            FROM transactions
+        """).fetchall()
+
+        existing = set()
+
+        for row in existing_rows:
+            existing.add((
+                str(row["date"]),
+                str(row["description"]),
+                str(row["category"]),
+                str(row["type"]),
+                round(float(row["amount"]), 2),
+                str(row["payment_method"])
+            ))
+
+        imported = 0
+        duplicates = 0
+        rejected = 0
+
+        for _, row in df.iterrows():
+
+            try:
+                raw_date = row["date"]
+                raw_amount = row["amount"]
+
+                if pd.isna(raw_date) or pd.isna(raw_amount):
+                    rejected += 1
+                    continue
+
+                parsed_date = pd.to_datetime(raw_date, errors="coerce")
+
+                if pd.isna(parsed_date):
+                    rejected += 1
+                    continue
+
+                transaction_date = parsed_date.strftime("%Y-%m-%d")
+
+                description = str(row["description"]).strip()
+                category = str(row["category"]).strip()
+                transaction_type = str(row["type"]).strip().title()
+                payment_method = str(row["payment_method"]).strip()
+
+                amount_text = str(raw_amount).replace(",", "").replace("₹", "").strip()
+                amount = float(amount_text)
+
+                if (
+                    not description
+                    or not category
+                    or not payment_method
+                    or transaction_type not in ["Income", "Expense"]
+                    or not np.isfinite(amount)
+                    or amount <= 0
+                ):
+                    rejected += 1
+                    continue
+
+                record = (
+                    transaction_date,
+                    description,
+                    category,
+                    transaction_type,
+                    round(amount, 2),
+                    payment_method
+                )
+
+                if record in existing:
+                    duplicates += 1
+                    continue
+
+                conn.execute("""
+                    INSERT INTO transactions
+                    (date, description, category, type, amount, payment_method)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, record)
+
+                existing.add(record)
+                imported += 1
+
+            except (ValueError, TypeError, OverflowError):
+                rejected += 1
+
+        conn.commit()
+
+        preview = display_df.head(10).replace(
+            {np.nan: None}
+        ).to_dict(orient="records")
+
+        return jsonify({
             "success": True,
             "filename": filename,
             "rows": int(len(df)),
-            "columns": list(df.columns),
-            "preview": df.head(10).replace(
-                {np.nan: None}
-            ).to_dict(orient="records")
-        }
-
-        return jsonify(result)
+            "columns": original_columns,
+            "preview": preview,
+            "imported": imported,
+            "duplicates": duplicates,
+            "rejected": rejected,
+            "message": "Import and analysis completed successfully"
+        })
 
     except Exception as error:
+
+        if conn:
+            conn.rollback()
+
         if os.path.exists(file_path):
             os.remove(file_path)
 
         return jsonify({
-            "error": f"Unable to read report: {str(error)}"
+            "error": f"Unable to import report: {str(error)}"
         }), 400
 
+    finally:
+        if conn:
+            conn.close()
 
 
 # Complete dashboard analytics API

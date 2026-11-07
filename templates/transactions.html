@@ -1,0 +1,210 @@
+
+{% extends "base.html" %}
+
+{% block title %}Transactions | FinancePro{% endblock %}
+
+{% block content %}
+
+<!-- HEADER -->
+<header class="top-header">
+    <div>
+        <p class="welcome-text">MANAGE YOUR MONEY</p>
+        <h1>Transactions</h1>
+        <p class="header-subtitle">
+            View, search, add and manage all your transactions.
+        </p>
+    </div>
+
+    <div class="header-actions">
+        <button class="add-btn" onclick="openForm()">
+            + Add Transaction
+        </button>
+
+        <button class="export-btn" onclick="exportTransactions()">
+            ↓ Export CSV
+        </button>
+    </div>
+</header>
+
+<!-- TRANSACTION SUMMARY -->
+<section class="cards">
+
+    <div class="card income-card">
+        <div class="card-top">
+            <span>Total Income</span>
+            <span class="card-icon">↗</span>
+        </div>
+        <h2 id="transactionIncome">₹0</h2>
+        <small>All recorded income</small>
+    </div>
+
+    <div class="card expense-card">
+        <div class="card-top">
+            <span>Total Expenses</span>
+            <span class="card-icon">↘</span>
+        </div>
+        <h2 id="transactionExpenses">₹0</h2>
+        <small>All recorded expenses</small>
+    </div>
+
+    <div class="card savings-card">
+        <div class="card-top">
+            <span>Net Balance</span>
+            <span class="card-icon">◈</span>
+        </div>
+        <h2 id="transactionBalance">₹0</h2>
+        <small>Income minus expenses</small>
+    </div>
+
+</section>
+
+<!-- TRANSACTION MANAGEMENT -->
+<section class="panel transactions-panel" id="transactions">
+
+    <div class="panel-heading">
+        <div>
+            <h3>All Transactions</h3>
+            <p>Search and manage your financial records</p>
+        </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="transaction-filters">
+
+        <input
+            type="text"
+            id="search"
+            placeholder="Search transactions..."
+        >
+
+        <input type="month" id="monthFilter">
+
+        <select id="categoryFilter">
+            <option value="">All Categories</option>
+        </select>
+
+    </div>
+
+    <!-- TRANSACTION TABLE -->
+    <div class="table-wrap">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Payment Method</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="transactionList">
+                <tr>
+                    <td colspan="7">Loading transactions...</td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+<!-- TRANSACTION MODAL -->
+{% block transaction_modal %}
+
+<div class="modal" id="transactionModal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <div>
+                <h2>Add Transaction</h2>
+                <p>Enter your transaction details</p>
+            </div>
+
+            <button
+                type="button"
+                class="modal-close"
+                onclick="closeForm()"
+            >×</button>
+
+        </div>
+
+        <form id="transactionForm">
+
+            <label>Date</label>
+            <input type="date" id="date" required>
+
+            <label>Description</label>
+            <input
+                type="text"
+                id="description"
+                placeholder="e.g. Monthly salary"
+                required
+            >
+
+            <label>Category</label>
+            <input
+                type="text"
+                id="category"
+                placeholder="e.g. Food, Shopping"
+                required
+            >
+
+            <label>Transaction Type</label>
+
+            <select id="type" required>
+                <option value="Expense">Expense</option>
+                <option value="Income">Income</option>
+            </select>
+
+            <label>Amount (₹)</label>
+
+            <input
+                type="number"
+                id="amount"
+                placeholder="Enter amount"
+                min="0.01"
+                step="0.01"
+                required
+            >
+
+            <label>Payment Method</label>
+
+            <select id="payment_method" required>
+                <option value="Cash">Cash</option>
+                <option value="UPI">UPI</option>
+                <option value="Debit Card">Debit Card</option>
+                <option value="Net Banking">Net Banking</option>
+            </select>
+
+            <div class="modal-buttons">
+
+                <button type="submit">
+                    Save Transaction
+                </button>
+
+                <button
+                    type="button"
+                    class="cancel"
+                    onclick="closeForm()"
+                >
+                    Cancel
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
